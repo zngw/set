@@ -18,7 +18,7 @@ func New() *Set {
 
 // 添加
 func (s *Set) Add(item interface{}) {
-	s.m.Store(item,true)
+	s.m.Store(item, true)
 }
 
 // 删除
@@ -55,7 +55,7 @@ func (s *Set) IsEmpty() bool {
 
 // 转切片输出
 func (s *Set) List() (list []interface{}) {
-	s.m.Range(func(k,v interface{}) bool {
+	s.m.Range(func(k, v interface{}) bool {
 		list = append(list, k)
 		return true
 	})
@@ -64,8 +64,8 @@ func (s *Set) List() (list []interface{}) {
 }
 
 // 遍历
-func (s *Set)Range(f func(key interface{}) bool)  {
-	s.m.Range(func(k,v interface{}) bool {
+func (s *Set) Range(f func(key interface{}) bool) {
+	s.m.Range(func(k, v interface{}) bool {
 		return f(k)
 	})
 }
