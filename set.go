@@ -2,28 +2,33 @@ package set
 
 import (
 	"sync"
+	"sync/atomic"
 )
 
 // Set 集合
 type Set struct {
-	m sync.Map
+	m   sync.Map
+	num int32
 }
 
 // 创建
 func New() *Set {
 	return &Set{
-		m: sync.Map{},
+		m:   sync.Map{},
+		num: 0,
 	}
 }
 
 // 添加
 func (s *Set) Add(item interface{}) {
 	s.m.Store(item, true)
+	atomic.AddInt32(&s.num, 1)
 }
 
 // 删除
 func (s *Set) Remove(item interface{}) {
 	s.m.Delete(item)
+	atomic.AddInt32(&s.num, -1)
 }
 
 // 判断是否存在
@@ -34,23 +39,21 @@ func (s *Set) Has(item interface{}) (ok bool) {
 
 // 获取集合大小
 func (s *Set) Len() int {
-	return len(s.List())
+	return int(s.num)
 }
 
 // 清除
 func (s *Set) Clear() {
 	s.m.Range(func(k, v interface{}) bool {
 		s.m.Delete(k)
+		atomic.AddInt32(&s.num, -1)
 		return true
 	})
 }
 
 // 判断是否为空
 func (s *Set) IsEmpty() bool {
-	if s.Len() == 0 {
-		return true
-	}
-	return false
+	return s.num == 0
 }
 
 // 转切片输出
