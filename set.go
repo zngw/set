@@ -21,14 +21,18 @@ func New() *Set {
 
 // 添加
 func (s *Set) Add(item interface{}) {
-	s.m.Store(item, true)
-	atomic.AddInt32(&s.num, 1)
+	_, loaded := s.m.Swap(item, true)
+	if !loaded {
+		atomic.AddInt32(&s.num, 1)
+	}
 }
 
 // 删除
 func (s *Set) Remove(item interface{}) {
-	s.m.Delete(item)
-	atomic.AddInt32(&s.num, -1)
+	_, loaded := s.m.LoadAndDelete(item)
+	if loaded {
+		atomic.AddInt32(&s.num, -1)
+	}
 }
 
 // 判断是否存在
