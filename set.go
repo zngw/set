@@ -49,8 +49,7 @@ func (s *Set) Len() int {
 // 清除
 func (s *Set) Clear() {
 	s.m.Range(func(k, v interface{}) bool {
-		s.m.Delete(k)
-		atomic.AddInt32(&s.num, -1)
+		s.Remove(k)
 		return true
 	})
 }
